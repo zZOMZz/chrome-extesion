@@ -1,0 +1,17 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+  "compilerOptions": {
+    "baseUrl": "./", // 确保模块解析从项目根目录开始
+    "paths": {
+      "@": [
+        "src/components"
+      ]
+    },
+    "moduleResolution": "node" // 确保模块解析使用 Node.js 逻辑
+  },
+  
+}
