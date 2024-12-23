@@ -87,17 +87,26 @@ const LoadingHeader: React.FC = () => {
     )
 }
 
-
+const returnUrl = (url: string) => {
+    switch (url) {
+        case 'https://www.fusionfund.com/portfolio':
+            return 'fusionfund'
+        case 'https://finance.sina.com.cn/china/':
+            return 'sina'
+        case 'https://s.taobao.com/search?commend=all&ie=utf8&initiative_id=tbindexz_20170306&page=1&q=%E7%AC%94%E8%AE%B0%E6%9C%AC&search_type=item&sourceId=tb.index&spm=a21bo.jianhua%2Fa.201856.d13&ssid=s5-e&tab=all':
+            return 'taobao'
+    }
+}
 
 const Drawer: React.FC<DrawerProps> = ({ isOpen, showVideo, showDoc, setVideo, changeMarkdownContent }) => {
 
-    const [isLoaded, setIsLoaded] = useState(false)
     const [audioSrc, setAudioSrc] = useState<string>("")
     
-    const [hasStarted, setHasStarted] = useState(false)
+    const [isLoaded, setIsLoaded] = useState(true)
+    const [hasStarted, setHasStarted] = useState(true)
+
     const [siteType, setSiteType] = useState<string>("")
     const [isReading, setIsReading] = useState(false)
-    const [markdownContent, setMarkdownContent] = useState<string>("")
     const [videoCover, setVideoCover] = useState<string>("")
     const [title, setTitle] = useState<string>("")
     
@@ -109,8 +118,8 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, showVideo, showDoc, setVideo, c
     }
 
     const getData = async () => {
-        // const res = await getSiteType()
-        const res_SiteType: any = await sendMessageToContent('getSiteType', { url: "https://www.fusionfund.com/" })
+        const url = location.href
+        const res_SiteType: any = await sendMessageToContent('getSiteType', { url })
 
         setSiteType(res_SiteType.website_type)
 
@@ -120,15 +129,17 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, showVideo, showDoc, setVideo, c
             setTimeout(() => {
                 setIsLoaded(true)
                 getName()
-            }, 8000)
+            }, 48000)
         }, 2000)
     }
 
     const getName = async () => {
         // const res = await getFileNames()
-        const res: any = await sendMessageToContent('getFileNames', { site: 'fushionfund' })
+        const url = location.href
+        const site = returnUrl(url)
+        const res: any = await sendMessageToContent('getFileNames', { site })
         console.log('getName res [drawer.tsx]', res);
- 
+
         setVideo(res.video)
         setTitle(res.title)
         // const imageRes = await getImage(res.image)
@@ -137,7 +148,6 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, showVideo, showDoc, setVideo, c
         // const { data } = await getReport(res.file)
         const markdownRes: any = await sendMessageToContent('getReport', { id: res.file })
         console.log('markdownRes data', markdownRes.data);
-        setMarkdownContent(markdownRes.data.content)
         changeMarkdownContent(markdownRes.data.content)
 
         // const audioRes = await getAudio(res.audio)
@@ -146,10 +156,30 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, showVideo, showDoc, setVideo, c
         console.log('getName res', res);
     }
 
+    const handleChnageVoice = (voice: string) => {
+        switch (voice) {
+            case "标准男声":
+                setAudioSrc("man.mp3")
+                break
+            case "标准女声":
+                setAudioSrc("woman.mp3")
+                break
+            case "郭德纲":
+                setAudioSrc("guodegang.mp3")
+                break
+        }
+    }
+
     return (
-        <div id="drawer" className={`h-full w-[472px] overflow-auto bg-sunken transform ${isOpen ? "translate-x-0" : "translate-x-full"} transition-transform duration-300 rounded-2xl shadow-custom-drawer p-5 relative`}>
-            <div className="flex items-center justify-between mb-3 leading-[14px]">
-                <img src="https://p4.ssl.qhimg.com/t110b9a93015b4c522fd11925cd.webp" alt="brand" className="h-5 w-[74px] object-cover"/>
+        <div id="drawer" className={`h-full w-[472px] overflow-auto bg-sunken transform ${isOpen ? "translate-x-0 visible" : "invisible translate-x-full pointer-events-none"} transition-transform duration-300 rounded-tl-2xl rounded-bl-2xl shadow-custom-drawer  relative`}>
+            <div className="absolute top-0 right-0 -z-10">
+                <img src="https://p0.ssl.qhimg.com/t110b9a9301863cbc0ec7dec7e0.png" alt="background-linear" />
+            </div>
+            <div className="flex items-center justify-between mb-3 leading-[14px] px-5 pt-5 pb-3">
+                <div className="flex flex-row items-center gap-2">
+                    <img src="https://s1.ssl.qhres2.com/static/4c6346ad9fada294.svg" alt="brand" className="h-8 w-8 object-contain"  width={25}/>
+                    <span className="text-[#202224] text-[14px] font-semibold leading-[22px]">智研通</span>
+                </div>
                 <div className="flex">
                     <div className="w-8 h-8 flex items-center justify-center cursor-pointer hover:scale-105">
                         <img src='https://s4.ssl.qhres2.com/static/c988e2b3061e51c9.svg' alt="question" className="w-4 h-4 inline-block" />
@@ -164,8 +194,8 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, showVideo, showDoc, setVideo, c
             </div>
             {
                 hasStarted ? (
-                    <>
-                        <div className=" mb-2">
+                    <div className="px-3">
+                        <div className="mb-2">
                             {
                                 isLoaded ? <FinishedHeader selectOptions={options} /> : <LoadingHeader />
                             }
@@ -174,16 +204,19 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, showVideo, showDoc, setVideo, c
                             <LoadingCard siteType={siteType} isReading={isReading} />
                         </div>
                         <div className={`flex flex-col gap-4 ${ isLoaded ? 'opacity-100' : 'opacity-0' } transition-all`}>
-                            <DocCard content={markdownContent} showDoc={showDoc} />
-                            <VideoCard showVideo={showVideo} videoCover={`https://dev06.se.tjcorp.qihoo.net:8000/v1/images/${videoCover}`} title={title} />
-                            <AudioCard src={`https://dev06.se.tjcorp.qihoo.net:8000/v1/audio/${audioSrc}`} title={title} />
+                            <DocCard title={title} showDoc={showDoc} />
+                            <VideoCard showVideo={showVideo} videoCover={`https://dev06.se.tjcorp.qihoo.net:8000/v1/images/${videoCover}`} title={title} videoTime="4:53" />
+                            <AudioCard src={`https://dev06.se.tjcorp.qihoo.net:8000/v1/audio/${audioSrc}`} title={title} handleChnageVoice={handleChnageVoice} />
                         </div>
-                    </>
+                    </div>
                 ) : (
                         <div className="flex flex-col justify-center gap-[96px]">
-                            <div className="flex px-9 mt-10 flex-col justify-center items-center">
-                                <div className="text-center text-[#202224] text-[28px] font-medium leading-9 mb-[9px]">精准的产品定位</div>
-                                <div className="text-[#505355] text-center text-[14px] leading-[22px] mb-6">一段介绍文字，准确描述产品的能力、优势或者使用场景,文字简洁，引导用户使用</div>
+                            <div className="flex px-9 mt-10 flex-col justify-center items-center relative">
+                                <img src="https://s4.ssl.qhres2.com/static/be78caf6983831e9.svg" alt="union-large" className="absolute top-0 right-16 " />
+                                <img src="https://s3.ssl.qhres2.com/static/dd1fe6603811c68b.svg" alt="union-middle" className="absolute top-8 left-20" />
+                                <img src="https://s1.ssl.qhres2.com/static/70155cb6ef2f75c0.svg" alt="union-small" className="absolute right-[108px] -top-7" />
+                                <div className="text-center text-[#202224] text-[28px] font-medium leading-9 mb-[9px] mt-14">用智研通，一“点”就通！</div>
+                                <div className="text-[#505355] text-center text-[14px] leading-[22px] mb-6">快速生成专业报告，并智能转化为视频或播客，多场景满足您的内容创作和分享需求，省时高效，简单易用！</div>
                                 <div
                                     className="w-40 h-10 px-3 py-[7px] rounded-xl flex items-center justify-center text-white cursor-pointer hover:scale-105 text-[16px] font-semibold"
                                     style={{
@@ -201,7 +234,7 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, showVideo, showDoc, setVideo, c
                                     </div>
                                     <div className="flex flex-col w-[196px] gap-1">
                                         <div className="text-[#202224] text-[16px] font-semibold leading-6">通览网站，生成研究报告</div>
-                                        <div className="text-[#888D93] text-[13px] font-normal leading-5">一段介绍文字，对当前功能进行简短、准确的说明</div>
+                                        <div className="text-[#888D93] text-[13px] font-normal leading-5">快速扫描整站内容，智能提取关键信息，帮助您生成结构清晰、重点突出的研究报告，节省时间，提高效率。</div>
                                     </div>
                                 </div>
                                 <div className="flex flex-row items-center gap-4">
@@ -210,7 +243,7 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, showVideo, showDoc, setVideo, c
                                     </div>
                                     <div className="flex flex-col w-[196px] gap-1">
                                         <div className="text-[#202224] text-[16px] font-semibold leading-6">将报告生成视频</div>
-                                        <div className="text-[#888D93] text-[13px] font-normal leading-5">一段介绍文字，对当前功能进行简短、准确的说明</div>
+                                        <div className="text-[#888D93] text-[13px] font-normal leading-5">将文字报告转换为动态视频，通过可视化方式呈现分析结果，让复杂信息更加直观易懂。</div>
                                     </div>
                                 </div>
                                 <div className="flex flex-row items-center gap-4">
@@ -219,7 +252,7 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, showVideo, showDoc, setVideo, c
                                     </div>
                                     <div className="flex flex-col w-[196px] gap-1">
                                         <div className="text-[#202224] text-[16px] font-semibold leading-6">生成播客，报告讲给你听</div>
-                                        <div className="text-[#888D93] text-[13px] font-normal leading-5">一段介绍文字，对当前功能进行简短、准确的说明</div>
+                                        <div className="text-[#888D93] text-[13px] font-normal leading-5">将报告内容生成音频播客，支持随时随地收听，为您提供更便捷的信息获取方式。</div>
                                     </div>
                                 </div>
                             </div>

@@ -3,15 +3,19 @@ import React, { useRef, useState, useEffect } from "react";
 interface AudioCardProps {
     src: string;
     title: string
+    handleChnageVoice: (voice: string) => void
 }
 
-const AudioCard: React.FC<AudioCardProps> = ({ src, title }) => {
+const AudioCard: React.FC<AudioCardProps> = ({ src, title, handleChnageVoice }) => {
     const audioRef = useRef<HTMLAudioElement>(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
     const [volume, setVolume] = useState(1);
     const [isSetVolume, setIsSetVolume] = useState(false);
+    const [voice, setVoice] = useState("标准男声");
+    const [changeVoice, setChangeVoice] = useState(false);
+    const [voiceList, setVoiceList] = useState(["标准男声", "标准女声", "郭德纲"]);
 
     useEffect(() => {
         const audio = audioRef.current;
@@ -67,7 +71,12 @@ const AudioCard: React.FC<AudioCardProps> = ({ src, title }) => {
     };
 
     return (
-        <div className="p-3 bg-white rounded-2xl mb-3 flex flex-col border border-[rgba(0,0,0,0.12)]">
+        <div
+            className="p-3 bg-white rounded-2xl mb-3 flex flex-col border border-[rgba(0,0,0,0.12)]"
+            style={{
+                boxShadow: "rgba(0,0,0,0.04) 0px 6px 14px 0px"
+            }}
+        >
             <audio
                 ref={audioRef}
                 src={src}
@@ -79,14 +88,46 @@ const AudioCard: React.FC<AudioCardProps> = ({ src, title }) => {
                     <div className="mr-1">
                         <img src="https://s3.ssl.qhres2.com/static/84c387df226655a5.svg" alt="audio-icon" />
                     </div>
-                    <span>音频研报</span>
+                    <span className="text-[13px] font-semibold text-[#FC461B] leading-5">音频解读</span>
                 </div>
-                <div className="card-title-icon hover:scale-105 cursor-pointer">
-                    <img src="https://s3.ssl.qhres2.com/static/5bfbb4b20f84c8c1.svg" alt="download" />
+                <div className="flex flex-row gap-4 items-center">
+                    <div
+                        className="flex flex-row cursor-pointer text-[#202224] text-[14px] font-normal relative"
+                        onMouseEnter={() => setChangeVoice(true)}
+                        onMouseLeave={() => setChangeVoice(false)}
+                    >
+                        <span>解读人：</span>
+                        <span>{ voice }</span>
+                        <img src="https://s3.ssl.qhres2.com/static/df5ff4fccca308a8.svg" alt="" className="ml-1" />
+                        <div className={`absolute border shadow-xl bg-white rounded-xl right-0 top-[22px] z-[999] ${changeVoice ? 'visible h-[110px]' : ' invisible h-0 opacity-0'} transition-all`}>
+                            <ul className="py-3 px-2 h-full">
+                                {
+                                    voiceList.map((item, index) => {
+                                        return (
+                                            <li
+                                                key={index}
+                                                className="py-1 px-3 hover:bg-[#F7F8F9] cursor-pointer rounded-lg"
+                                                onClick={() => {
+                                                    setVoice(item);
+                                                    setChangeVoice(false);
+                                                    handleChnageVoice(item);
+                                                }}
+                                            >
+                                                { item }
+                                            </li>
+                                        );
+                                    })
+                               }
+                            </ul>
+                        </div>
+                    </div>
+                    <div className="card-title-icon hover:scale-105 cursor-pointer">
+                        <img src="https://s3.ssl.qhres2.com/static/5bfbb4b20f84c8c1.svg" alt="download" />
+                    </div>
                 </div>
             </div>
-            <div className="flex items-center justify-center font-semibold text-[16px] leading-6">
-                <span>{ title }</span>
+            <div className="flex items-center justify-center fo·nt-semibold text-[16px] leading-6 w-3/5 mx-auto">
+                <span className="text-[#202224]">{ title }</span>
             </div>
             {/* Progress Bar */}
             <div className="mt-4">

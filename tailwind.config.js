@@ -39,6 +39,13 @@ export default {
             // }
           },
         },
+        customProse: {
+          css: {
+            h1: {
+              color: 'red',
+            }
+          }
+        }
       }
     },
   },

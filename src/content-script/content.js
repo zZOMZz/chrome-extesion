@@ -9,9 +9,13 @@ shadowHost.id = "shadow-host";
 document.body.appendChild(shadowHost);
 
 // 将路径传递到页面的 Drawer 中
-const videoSrc = chrome.runtime.getURL("video/output.mp4");
-console.log('[content.js] Video source:', videoSrc);
-shadowHost.setAttribute("data-video-src", videoSrc);
+const videoSrc_1 = chrome.runtime.getURL("video/fusionfund.mp4");
+const videoSrc_2 = chrome.runtime.getURL("video/taobao.mp4");
+const videoSrc_3 = chrome.runtime.getURL("video/sina.mp4");
+console.log('[content.js] Video source:', videoSrc_1);
+shadowHost.setAttribute("data-video-src-1", videoSrc_1);
+shadowHost.setAttribute("data-video-src-2", videoSrc_2);
+shadowHost.setAttribute("data-video-src-3", videoSrc_3);
 
 // 创建 Shadow DOM 并附加挂载点
 const shadowRoot = shadowHost.attachShadow({ mode: "open" });

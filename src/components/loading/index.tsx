@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 
 interface LoadingProps {
   siteType: string;
@@ -5,7 +6,18 @@ interface LoadingProps {
 }
 
 const Loading: React.FC<LoadingProps> = ({ siteType, isReading }) => {
- 
+  const [siteNums, setSiteNums] = useState<number>(53)
+  
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setSiteNums(siteNums + 1)
+    }, 4000)
+
+    return () => {
+      clearInterval(timer)
+    }
+  }, [siteNums])
+  
     return (
       <div className="p-4 bg-white rounded-xl flex flex-col">
         <div className="flex flex-col">
@@ -35,7 +47,7 @@ const Loading: React.FC<LoadingProps> = ({ siteType, isReading }) => {
             </div>
             <div className="text-[#505355] text-[13px] flex flex-col leading-6">
               <div>识别网页结构</div>
-              <div>分析234个网页</div>
+              <div>分析{ siteNums }个网页</div>
             </div>
           </div>
         </div>

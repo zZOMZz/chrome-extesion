@@ -23,6 +23,22 @@ const posterPath = "";
 // const markdownUrl = "/markdown/2.md"
 // const markdownUrl = "/api/v1/report/finance_001"
 
+const videoSrc_1 = document.querySelector("#shadow-host")?.getAttribute("data-video-src-1") as string;
+const videoSrc_2 = document.querySelector("#shadow-host")?.getAttribute("data-video-src-2") as string;
+const videoSrc_3 = document.querySelector("#shadow-host")?.getAttribute("data-video-src-3") as string;
+
+const getVideoSrc = (url: string) => {
+  switch (url) {
+    case 'https://www.fusionfund.com/':
+      return videoSrc_1
+    case 'https://finance.sina.com.cn/china/':
+      return videoSrc_3
+    case 'https://s.taobao.com/search?commend=all&ie=utf8&initiative_id=tbindexz_20170306&page=1&q=%E7%AC%94%E8%AE%B0%E6%9C%AC&search_type=item&sourceId=tb.index&spm=a21bo.jianhua%2Fa.201856.d13&ssid=s5-e&tab=all':
+      return videoSrc_2
+    default:
+      return videoSrc_1
+  }
+}
 
 function App() {
   const [isOpen, setIsOpen] = useState(false)
@@ -51,17 +67,17 @@ function App() {
   const changeMarkdownContent = (content: string) => {
     setMarkdownContent(content)
   }
-  // http://dev06.se.tjcorp.qihoo.net:8000/v1/video/${videoUrl}
-  const root = document.getElementById("react-drawer-root");
-  console.log('root', root);
-  const videoSrc = document.querySelector("#shadow-host")?.getAttribute("data-video-src") as string;
-  console.log('[App.tsx] videoSrc', videoSrc);
+  const url = window.location.href
+  const videoSrc = getVideoSrc(url)
+  
   return (
-    <div className="fixed top-0 right-0  h-full z-[999]">
+    <div className={`fixed top-0 right-0  h-full z-[999] ${isOpen ? 'visible pointer-events-auto' : 'pointer-events-none'}`}>
       {showVideo && <VideoPlayer src={videoSrc} poster={posterPath} onClose={() => { setShowVideo(false) }} />}
       {showDoc && <DocMarkdown onClose={() => { setShowDoc(false) }} content={markdownContent} />}
-      
-      <FloatingBall onClick={()  => { handleOpen() }} />
+      <div className="pointer-events-auto">
+
+      <FloatingBall onClick={handleOpen} />
+      </div>
       <Drawer isOpen={isOpen} showVideo={handleVideo} showDoc={handleDoc} setVideo={handleVideoUrl} changeMarkdownContent={changeMarkdownContent} />
     </div>
   )
