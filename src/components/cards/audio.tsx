@@ -5,7 +5,7 @@ interface AudioCardProps {
     title: string
     handleChnageVoice: (voice: string) => void
 }
-
+const voiceList = ["标准男声", "标准女声", "郭德纲"]
 const AudioCard: React.FC<AudioCardProps> = ({ src, title, handleChnageVoice }) => {
     const audioRef = useRef<HTMLAudioElement>(null);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -15,7 +15,6 @@ const AudioCard: React.FC<AudioCardProps> = ({ src, title, handleChnageVoice }) 
     const [isSetVolume, setIsSetVolume] = useState(false);
     const [voice, setVoice] = useState("标准男声");
     const [changeVoice, setChangeVoice] = useState(false);
-    const [voiceList, setVoiceList] = useState(["标准男声", "标准女声", "郭德纲"]);
 
     useEffect(() => {
         const audio = audioRef.current;

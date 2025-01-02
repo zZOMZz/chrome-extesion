@@ -102,8 +102,8 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, showVideo, showDoc, setVideo, c
 
     const [audioSrc, setAudioSrc] = useState<string>("")
     
-    const [isLoaded, setIsLoaded] = useState(true)
-    const [hasStarted, setHasStarted] = useState(true)
+    const [isLoaded, setIsLoaded] = useState(false)
+    const [hasStarted, setHasStarted] = useState(false)
 
     const [siteType, setSiteType] = useState<string>("")
     const [isReading, setIsReading] = useState(false)

@@ -75,8 +75,7 @@ function App() {
       {showVideo && <VideoPlayer src={videoSrc} poster={posterPath} onClose={() => { setShowVideo(false) }} />}
       {showDoc && <DocMarkdown onClose={() => { setShowDoc(false) }} content={markdownContent} />}
       <div className="pointer-events-auto">
-
-      <FloatingBall onClick={handleOpen} />
+        <FloatingBall onClick={handleOpen} />
       </div>
       <Drawer isOpen={isOpen} showVideo={handleVideo} showDoc={handleDoc} setVideo={handleVideoUrl} changeMarkdownContent={changeMarkdownContent} />
     </div>
